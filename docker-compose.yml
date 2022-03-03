@@ -1,6 +1,7 @@
 # based heavily on:
-# https://github.com/JanusGraph/janusgraph-docker/blob/master/docker-compose-cql-es.yml
-#
+# https://github.com/JanusGraph/janusgraph-docker/blob/master/docker-compose-cql-es.yml and https://github.com/skhatri/notebook
+
+
 # # Copyright 2022 
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,13 +19,28 @@
 version: "3.8"
 
 services:
+  # https://github.com/aws-samples/graph-notebook-docker-image
+  graph_notebook:
+    build: .
+    container_name: jg-notebook-jupyter
+    restart: always
+    depends_on:
+      - janusgraph
+    ports: 
+      - "8888:8888"
+    networks:
+      - jg-notebook-network
+
   janusgraph:
     image: docker.io/janusgraph/janusgraph:0.6.1
     container_name: jg-notebook-janusgraph
     environment:
       JANUS_PROPS_TEMPLATE: cql-es
-      janusgraph.storage.hostname: jce-cassandra
-      janusgraph.index.search.hostname: jce-elastic
+      janusgraph.storage.hostname: cassandra
+      janusgraph.index.search.hostname: elasticsearch
+      # for use with : 01-Building-a-Fraud-Graph-Application.ipynb
+      # https://github.com/JanusGraph/janusgraph/issues/1274
+      janusgraph.graph.set-vertex-id: "true"
     ports:
       - "8182:8182"
     networks:
@@ -59,6 +75,8 @@ services:
       - "9200:9200"
     networks:
       - jg-notebook-network
+
+
 
 networks:
   jg-notebook-network:

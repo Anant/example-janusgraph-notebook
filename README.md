@@ -1,14 +1,49 @@
-# Setup JanusGraph
-A tutorial for running [JanusGraph](https://janusgraph.org/) on Cassandra and Elasticsearch, and then integrating within [AWS Graph Notebook](https://github.com/aws/graph-notebook).
+# JanusGraph Notebook
+A tutorial for running [JanusGraph](https://janusgraph.org/) on Cassandra and Elasticsearch, and then integrating within [AWS Graph Notebook](https://github.com/aws/graph-notebook). 
 
-## WARNING
-This will create files and potentially overwrite files on your box. Run with caution.
-I think only is a problem if you have an existing janus-graph-0.5.2 installation and it's at ~/lib/janusgraph-0.5.2 . See ./scripts/startup/setup-janus.sh for what we do.
 
-If you don't have Cassandra/Elasticsearch running on your box already, you can use our docker compose file to start Elassandra.
-
+## Setup
+Start everything using docker-compose
 ```
 docker-compose up -d
 ```
 
+You can now find it open in http://localhost:8888
 
+Login using password: `tensorflow`
+
+### Setup a connection in a notebook
+Out of the box, the Graph Notebook lib provides dozens of notebooks to try out. Feel free to try any that aren't Neptune specific and run Gremlin commands. Some also require some linux file permissions that don't work on Docker as well though, so watch out for that. 
+
+However, make sure to run this at the top of any notebook that you try:
+
+```
+%%graph_notebook_config
+{
+  "host": "janusgraph",
+  "port": 8182,
+  "ssl": false,
+  "gremlin": {
+    "traversal_source": "g"
+  }
+}
+```
+
+Example of how this works is given here: http://localhost:8888/notebooks/notebooks/sample-config.ipynb
+
+## Start a console
+
+Want to just use your standard Gremlin console for whatever reason?
+
+```
+docker exec -it jg-notebook-janusgraph ./bin/gremlin.sh
+:remote connect tinkerpop.server conf/remote.yaml
+g = traversal().withRemote('conf/remote-graph.properties')
+
+# g.V() or whatever you want to run
+```
+
+# Credits: 
+Based heavily on:
+- https://github.com/JanusGraph/janusgraph-docker/blob/master/docker-compose-cql-es.yml 
+- https://github.com/skhatri/notebook
