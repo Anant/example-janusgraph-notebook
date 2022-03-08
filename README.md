@@ -13,9 +13,24 @@ You can now find it open in http://localhost:8888
 Login using password: `tensorflow`
 
 ### Setup a connection in a notebook
-Out of the box, the Graph Notebook lib provides dozens of notebooks to try out. Feel free to try any that aren't Neptune specific and run Gremlin commands. Some also require some linux file permissions that don't work on Docker as well though, so watch out for that. 
+Out of the box, the Graph Notebook lib provides dozens of notebooks to try out. Unfortunately those with seed data for loading into your graph mostly don't work since they use custom string ids, and [JanusGraph doesn't support that](https://github.com/JanusGraph/janusgraph/issues/1221). 
 
-However, make sure to run this at the top of any notebook that you try:
+However, you can load in the air routes data manually using the commands below, which will allow you to use the `Air-Routes-Gremlin` notebook
+
+#### Load seed data
+```
+./scripts/load-in-airroutes.sh
+docker cp ./tmp jg-notebook-janusgraph:/opt/tmp/
+
+docker exec -it jg-notebook-janusgraph ./bin/gremlin.sh
+:remote connect tinkerpop.server conf/remote.yaml
+g = traversal().withRemote('conf/remote-graph.properties')
+path = "/opt/tmp/air-routes.xml";
+g.io(path).read().iterate();
+```
+
+
+Run this at the top of any notebook that you try. Do it here as well.
 
 ```
 %%graph_notebook_config
@@ -30,6 +45,9 @@ However, make sure to run this at the top of any notebook that you try:
 ```
 
 Example of how this works is given here: http://localhost:8888/notebooks/notebooks/sample-config.ipynb
+
+#### Run the notebook!
+You can find it here: http://localhost:8888/notebooks/notebooks/sample-config.ipynb
 
 ## Start a console
 

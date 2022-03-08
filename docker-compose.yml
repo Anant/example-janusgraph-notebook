@@ -38,13 +38,22 @@ services:
       JANUS_PROPS_TEMPLATE: cql-es
       janusgraph.storage.hostname: cassandra
       janusgraph.index.search.hostname: elasticsearch
-      # for use with : 01-Building-a-Fraud-Graph-Application.ipynb
-      # https://github.com/JanusGraph/janusgraph/issues/1274
-      janusgraph.graph.set-vertex-id: "true"
+      # default is false
+      #janusgraph.graph.set-vertex-id: "true"
+
+      # all of these will get added to /etc/opt/janusgraph/janusgraph-server.yaml automatically, but without the `gremlinserver` in front
+      gremlinserver.channelizer: org.apache.tinkerpop.gremlin.server.channel.WsAndHttpChannelizer
+
+      # https://github.com/aws/graph-notebook/tree/main/additional-databases/gremlin-server#using-seed-with-gremlin-server
+      # turns out it still doesn't work, since it uses 
+      # JAVA_OPTIONS: "-Xms512m -Xmx4096m -Xss2m"
     ports:
       - "8182:8182"
     networks:
       - jg-notebook-network
+        #volumes:
+        #  - "./conf/janusgraph-for-notebook.properties:/etc/opt/janusgraph/janusgraph-for-notebook.properties:ro"
+
     healthcheck:
       test: ["CMD", "bin/gremlin.sh", "-e", "scripts/remote-connect.groovy"]
       interval: 10s
