@@ -1,6 +1,7 @@
 # JanusGraph Notebook
 A tutorial for running [JanusGraph](https://janusgraph.org/) on Cassandra and Elasticsearch, and then integrating within [AWS Graph Notebook](https://github.com/aws/graph-notebook). 
 
+For more information, see the [blog post](https://blog.anant.us/janusgraph-on-jupyter-using-notebooks-with-graph/).
 
 ## Setup
 Start everything using docker-compose
