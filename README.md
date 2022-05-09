@@ -61,7 +61,11 @@ g = traversal().withRemote('conf/remote-graph.properties')
 # g.V() or whatever you want to run
 ```
 
+# TODOs
+- Add script or docs to index into Elasticsearch (we have ES setup - but out of the box it isn't being used!)
 # Credits: 
 Based heavily on:
 - https://github.com/JanusGraph/janusgraph-docker/blob/master/docker-compose-cql-es.yml 
 - https://github.com/skhatri/notebook
+
+
